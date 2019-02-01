@@ -14,9 +14,9 @@ interface ParserInterface
     public function parse(array $chars);
 
     /**
-     * Separator use to split data
+     * Separator chars used to split data
      *
-     * @return string
+     * @return array
      */
     public function getSeparator();
 }

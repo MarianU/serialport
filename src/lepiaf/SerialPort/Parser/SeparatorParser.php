@@ -14,7 +14,7 @@ class SeparatorParser implements ParserInterface
      */
     public function __construct($separator = "\n")
     {
-        $this->separator = $separator;
+        $this->separator = is_array($separator) ? $separator : [$separator];
     }
 
     /**

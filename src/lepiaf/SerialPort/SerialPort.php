@@ -3,13 +3,13 @@
 namespace lepiaf\SerialPort;
 
 use lepiaf\SerialPort\Configure\ConfigureInterface;
-use lepiaf\SerialPort\Configure\TTYConfigure;
+use lepiaf\SerialPort\Parser\ParserInterface;
+use lepiaf\SerialPort\Parser\SeparatorParser;
+
 use lepiaf\SerialPort\Exception\DeviceNotAvailable;
 use lepiaf\SerialPort\Exception\DeviceNotFound;
 use lepiaf\SerialPort\Exception\DeviceNotOpened;
 use lepiaf\SerialPort\Exception\WriteNotAllowed;
-use lepiaf\SerialPort\Parser\ParserInterface;
-use lepiaf\SerialPort\Parser\SeparatorParser;
 
 /**
  * SerialPort to handle serial connection easily with PHP
@@ -110,7 +110,7 @@ class SerialPort
         do {
             $char = fread($this->fd, 1);
             $chars[] = $char;
-        } while ($char != $this->getParser()->getSeparator());
+        } while (!in_array($char, $this->getParser()->getSeparator()));
 
         return $this->getParser()->parse($chars);
     }
@@ -133,11 +133,13 @@ class SerialPort
      * configure serial line
      *
      * @return ConfigureInterface
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    private function getConfigure()
+    public function getConfigure()
     {
         if (null === $this->configure) {
-            $this->configure = new TTYConfigure();
+            $this->configure = Configure::getInstance();
         }
 
         return $this->configure;
@@ -148,7 +150,7 @@ class SerialPort
      *
      * @return ParserInterface
      */
-    private function getParser()
+    public function getParser()
     {
         if (null === $this->parser) {
             $this->parser = new SeparatorParser();
